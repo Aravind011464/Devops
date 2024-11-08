@@ -28,7 +28,7 @@ pipeline {
                 script {
                     // Run the Docker container to execute tests
                     docker.image("${IMAGE_NAME}").inside {
-                        sh 'npm install'  // Ensure dependencies are installed before running tests
+                        sh 'npm install'  // Ensure dependencies are installed before running testss
                         sh 'npm test'     // Run your tests
                     }
                 }
