@@ -18,9 +18,9 @@ pipeline {
     steps {
         withCredentials([usernamePassword(credentialsId: '9069a989-3162-4108-bc01-fb509b51c264', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
             script {
-                // Securely pass the password using --password-stdin without direct string interpolation
+                // Docker login with password securely passed via stdin
                 bat """
-                echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                echo | set /p dummy=$DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
                 """
             }
         }
