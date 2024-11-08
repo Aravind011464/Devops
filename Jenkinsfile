@@ -14,11 +14,22 @@ pipeline {
             }
         }
 
+        stage('Login to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    script {
+                        // Log in to Docker Hub to increase pull rate limit
+                        sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+                    }
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image
-                    docker.build("${IMAGE_NAME}")
+                    // Use node:16-alpine to build the Docker image
+                    docker.build("${IMAGE_NAME}", "-f Dockerfile .")
                 }
             }
         }
@@ -28,8 +39,8 @@ pipeline {
                 script {
                     // Run the Docker container to execute tests
                     docker.image("${IMAGE_NAME}").inside {
-                        sh 'npm install'  // Ensure dependencies are installed before running testsss
-                        sh 'npm test'     // Run your testss
+                        sh 'npm install'  // Ensure dependencies are installed before running tests
+                        sh 'npm test'     // Run your tests
                     }
                 }
             }
