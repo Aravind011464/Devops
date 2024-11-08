@@ -19,7 +19,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: '9069a989-3162-4108-bc01-fb509b51c264', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                     script {
                         // Log in to Docker Hub to increase pull rate limit
-                        sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+                        bat "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
                     }
                 }
             }
@@ -29,7 +29,7 @@ pipeline {
             steps {
                 script {
                     // Use node:16-alpine to build the Docker image
-                    docker.build("${IMAGE_NAME}", "-f Dockerfile .")
+                    bat "docker build -t ${IMAGE_NAME} -f Dockerfile ."
                 }
             }
         }
@@ -39,8 +39,8 @@ pipeline {
                 script {
                     // Run the Docker container to execute tests
                     docker.image("${IMAGE_NAME}").inside {
-                        sh 'npm install'  // Ensure dependencies are installed before running tests
-                        sh 'npm test'     // Run your tests
+                        bat 'npm install'  // Ensure dependencies are installed before running tests
+                        bat 'npm test'     // Run your tests
                     }
                 }
             }
@@ -51,8 +51,8 @@ pipeline {
                 script {
                     // Run the Docker container to build the application
                     docker.image("${IMAGE_NAME}").inside {
-                        sh 'npm install'  // Install dependencies before building the app
-                        sh 'npm run build' // Build the application
+                        bat 'npm install'  // Install dependencies before building the app
+                        bat 'npm run build' // Build the application
                     }
                 }
             }
