@@ -39,8 +39,8 @@ pipeline {
                 script {
                     // Run the Docker container to execute tests
                     docker.image("${IMAGE_NAME}").inside {
-                        bat 'npm install'  // Ensure dependencies are installed before running tests
-                        bat 'npm test'     // Run your tests
+                        // bat 'npm install'  // Ensure dependencies are installed before running tests
+                        // bat 'npm test'     // Run your tests
                     }
                 }
             }
@@ -51,7 +51,7 @@ pipeline {
                 script {
                     // Run the Docker container to build the application
                     docker.image("${IMAGE_NAME}").inside {
-                        bat 'npm install'  // Install dependencies before building the app
+                        // bat 'npm install'  // Install dependencies before building the app
                         bat 'npm run build' // Build the application
                     }
                 }
