@@ -19,7 +19,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: '9069a989-3162-4108-bc01-fb509b51c264', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                     script {
                         // Log in to Docker Hub to increase pull rate limit
-                        bat "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+                        bat "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
                     }
                 }
             }
