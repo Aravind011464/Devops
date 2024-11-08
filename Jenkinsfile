@@ -10,7 +10,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 // Clone the Git repository
-                git url: "${GIT_REPO}", branch: 'main' // Ensure you specify the correct branch, e.g., 'main' or 'master'
+                git url: "${GIT_REPO}", branch: 'main'
             }
         }
 
@@ -28,7 +28,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Use node:16-alpine to build the Docker image
+                    // Build the Docker image from Dockerfile
                     bat "docker build -t ${IMAGE_NAME} -f Dockerfile ."
                 }
             }
@@ -37,10 +37,10 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Run the Docker container to execute tests
+                    // Run the Docker container to execute tests (no need to run `npm install` here)
                     docker.image("${IMAGE_NAME}").inside {
-                        // bat 'npm install'  // Ensure dependencies are installed before running tests
-                        // bat 'npm test'     // Run your tests
+                        // No need to install npm packages again here, as it was done during build
+                        // bat 'npm test' // Run your tests
                     }
                 }
             }
@@ -49,10 +49,9 @@ pipeline {
         stage('Build Application') {
             steps {
                 script {
-                    // Run the Docker container to build the application
+                    // Build the application in Docker container (no need to run `npm install` again)
                     docker.image("${IMAGE_NAME}").inside {
-                        // bat 'npm install'  // Install dependencies before building the app
-                        bat 'npm run build' // Build the application
+                        bat 'npm run build' // Build the application (ensure the build command is correct)
                     }
                 }
             }
