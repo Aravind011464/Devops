@@ -1,11 +1,16 @@
 pipeline {
     agent any
 
+    environment {
+        GIT_REPO = 'https://github.com/Aravind011464/DevopsFinal.git'
+        IMAGE_NAME = 'my-node-app'
+    }
+
     stages {
         stage('Clone Repository') {
             steps {
-                // Clone the Git repositorys
-                git 'https://github.com/Aravind011464/DevopsFinal.git'
+                // Clone the Git repository
+                git url: "${GIT_REPO}", branch: 'main' // Ensure you specify the correct branch, e.g., 'main' or 'master'
             }
         }
 
@@ -13,7 +18,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image
-                    docker.build('my-node-app')
+                    docker.build("${IMAGE_NAME}")
                 }
             }
         }
@@ -21,9 +26,10 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Run the Docker container to execute testsss
-                    docker.image('my-node-app').inside {
-                        sh 'npm test'
+                    // Run the Docker container to execute tests
+                    docker.image("${IMAGE_NAME}").inside {
+                        sh 'npm install'  // Ensure dependencies are installed before running tests
+                        sh 'npm test'     // Run your tests
                     }
                 }
             }
@@ -32,9 +38,10 @@ pipeline {
         stage('Build Application') {
             steps {
                 script {
-                    // Run the Docker container to build the applicationss
-                    docker.image('my-node-app').inside {
-                        sh 'npm run build'
+                    // Run the Docker container to build the application
+                    docker.image("${IMAGE_NAME}").inside {
+                        sh 'npm install'  // Install dependencies before building the app
+                        sh 'npm run build' // Build the application
                     }
                 }
             }
@@ -43,7 +50,7 @@ pipeline {
 
     post {
         always {
-            cleanWs() // Clean workspace after build
+            cleanWs()  // Clean workspace after build
         }
     }
 }
