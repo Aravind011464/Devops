@@ -15,15 +15,18 @@ pipeline {
         }
 
         stage('Login to Docker Hub') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: '9069a989-3162-4108-bc01-fb509b51c264', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                    script {
-                        // Log in to Docker Hub to increase pull rate limit
-                        bat "docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}"
-                    }
-                }
+    steps {
+        withCredentials([usernamePassword(credentialsId: '9069a989-3162-4108-bc01-fb509b51c264', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+            script {
+                // Use --password-stdin to securely pass the password
+                bat """
+                echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+                """
             }
         }
+    }
+}
+
 
         stage('Build Docker Image') {
             steps {
