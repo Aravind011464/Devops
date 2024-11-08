@@ -10,7 +10,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 // Clone the Git repository
-                git url: "${GIT_REPO}", branch: 'main'
+                git url: "${GIT_REPO}", branch: 'main' // Ensure you specify the correct branch, e.g., 'main' or 'master'
             }
         }
 
@@ -28,30 +28,31 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image from Dockerfile
+                    // Use node:16-alpine to build the Docker image
                     bat "docker build -t ${IMAGE_NAME} -f Dockerfile ."
                 }
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                script {
-                    // Run the Docker container to execute tests (no need to run `npm install` here)
-                    docker.image("${IMAGE_NAME}").inside {
-                        // No need to install npm packages again here, as it was done during build
-                        // bat 'npm test' // Run your tests
-                    }
-                }
-            }
-        }
+        // stage('Run Tests') {
+        //     steps {
+        //         script {
+        //             // Run the Docker container to execute tests
+        //             docker.image("${IMAGE_NAME}").inside {
+        //                 // bat 'npm install'  // Ensure dependencies are installed before running tests
+        //                 // bat 'npm test'     // Run your tests
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Build Application') {
             steps {
                 script {
-                    // Build the application in Docker container (no need to run `npm install` again)
+                    // Run the Docker container to build the application
                     docker.image("${IMAGE_NAME}").inside {
-                        bat 'npm run build' // Build the application (ensure the build command is correct)
+                        // bat 'npm install'  // Install dependencies before building the app
+                        bat 'npm run build' // Build the application
                     }
                 }
             }
